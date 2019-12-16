@@ -5,8 +5,91 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp_Windows_Project3_MultimediaPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="460" Width="1000" Loaded="Window_Loaded">
+    <Window.Resources>
+        <local:NameConverter x:Key="converter"/>
+    </Window.Resources>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Width="300" Background="LightBlue">
+            <ListBox Name="playlistListBox" Height="350" Canvas.Left="332" Canvas.Top="36" BorderThickness="2" BorderBrush="Black" Margin="1,0,0,0" MouseDoubleClick="playlistListBox_MouseDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name, Converter={StaticResource converter}}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Grid Height="70">
+                <Button Name="Browserbtn" Content="Browser" Width="100" Height="40" FontSize="20" FontWeight="Bold" Click="Browserbtn_Click"/>
+            </Grid>
+        </StackPanel>
+        <Grid DockPanel.Dock="Top" Background="AntiqueWhite" Height="350">
+
+            <Ellipse Stroke="Red" StrokeThickness="1" Margin="5" Width="300" Height="300">
+                <Ellipse.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="Gold" Offset="0.0" />
+                        <GradientStop Color="#FEFFD2" Offset="0.5" />
+                        <GradientStop Color="Gold" Offset="1.1" />
+                    </LinearGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Image Name="ImageMusic" Source="Images/music.png" Width="200" Height="200"  RenderOptions.BitmapScalingMode="HighQuality"/>
+
+        </Grid>
+
+        <StackPanel DockPanel.Dock="Bottom" Background="White">
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="50" Name="currentPostTblock" TextAlignment="Right" Margin="3 0" />
+                <Slider Width="575"  Name="TimeSlider" PreviewMouseUp="TimeSlider_PreviewMouseUp" IsMoveToPointEnabled="True"/>
+                <TextBlock Width="50" Name="durationTblock"/>
+            </StackPanel>
+            <StackPanel Name="Control" Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Width="180" VerticalAlignment="Center" Orientation="Horizontal">
+
+                </StackPanel>
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                    <Grid>
+                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Image  Source="Images/crossarrow.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Button>
+                <Button  Width="40" Height="40"   Background="Transparent" BorderThickness="0" Margin="10 0">
+                    <Grid>
+                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" Height="38" Margin="0,0,0.4,0" VerticalAlignment="Top" />
+                        <Image  Source="Images/previous.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Button>
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Playbtn" Click="Playbtn_Click">
+                    <Grid>
+                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Image Source="Images/pause.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality" Name="Playimg"/>
+                    </Grid>
+
+                </Button>
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                    <Grid>
+                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" Height="38" Margin="0,0,0.4,0" VerticalAlignment="Top" />
+                        <Image  Source="Images/next.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Button>
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                    <Grid>
+                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Image  Source="Images/repeat.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Button>
+                <StackPanel Width="180" VerticalAlignment="Center" Orientation="Horizontal">
+                    <Button Background="Transparent" BorderThickness="0" Name="volumeButton" Click="volumeButton_Click">
+                        <Image Source="Images/volumelevel.png" Height="20" Width="20" Margin="10 0 " Name="volumeImg"/>
+                    </Button>
+                    <Slider Width="130" IsMoveToPointEnabled="True" VerticalAlignment="Center" Margin="5 0" Name="volumeSlider" PreviewMouseUp="volumeSlider_PreviewMouseUp" Maximum="1"/>
+                </StackPanel>
+
+            </StackPanel>
+
+
+        </StackPanel>
+
+    </DockPanel>
 </Window>
