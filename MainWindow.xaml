@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp_Windows_Project3_MultimediaPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="460" Width="1000" Loaded="Window_Loaded">
+        Title="MainWindow" Height="460" Width="1000" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <local:NameConverter x:Key="converter"/>
     </Window.Resources>
@@ -48,13 +48,13 @@
                 <StackPanel Width="180" VerticalAlignment="Center" Orientation="Horizontal">
 
                 </StackPanel>
-                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Random" Click="Random_Click">
                     <Grid>
-                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Ellipse Name="RandomEllipse" Fill="Transparent" StrokeThickness="2" Stroke="Black" />
                         <Image  Source="Images/crossarrow.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </Button>
-                <Button  Width="40" Height="40"   Background="Transparent" BorderThickness="0" Margin="10 0">
+                <Button  Width="40" Height="40"   Background="Transparent" BorderThickness="0" Margin="10 0" Name="Previousbtn" Click="Previousbtn_Click">
                     <Grid>
                         <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" Height="38" Margin="0,0,0.4,0" VerticalAlignment="Top" />
                         <Image  Source="Images/previous.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -67,16 +67,16 @@
                     </Grid>
 
                 </Button>
-                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="NextButton" Click="NextButton_Click">
                     <Grid>
                         <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" Height="38" Margin="0,0,0.4,0" VerticalAlignment="Top" />
                         <Image  Source="Images/next.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </Button>
-                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0">
+                <Button  Width="40" Height="40"  Background="Transparent" Name="repeatbtn" Click="repeatbtn_Click" BorderThickness="0" Margin="10 0">
                     <Grid>
-                        <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
-                        <Image  Source="Images/repeat.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Ellipse Name="repeatEllipse" Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Image Name="repeatImage" Source="Images/repeat.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </Button>
                 <StackPanel Width="180" VerticalAlignment="Center" Orientation="Horizontal">
