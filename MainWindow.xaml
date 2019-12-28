@@ -12,6 +12,13 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Right" Width="300" Background="LightBlue">
             <ListBox Name="playlistListBox" Height="350" Canvas.Left="332" Canvas.Top="36" BorderThickness="2" BorderBrush="Black" Margin="1,0,0,0" MouseDoubleClick="playlistListBox_MouseDoubleClick">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Remove" Click="Remove_item_file">
+                            
+                        </MenuItem>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name, Converter={StaticResource converter}}"/>
@@ -24,16 +31,23 @@
         </StackPanel>
         <Grid DockPanel.Dock="Top" Background="AntiqueWhite" Height="350">
 
-            <Ellipse Stroke="Red" StrokeThickness="1" Margin="5" Width="300" Height="300">
-                <Ellipse.Fill>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="Gold" Offset="0.0" />
-                        <GradientStop Color="#FEFFD2" Offset="0.5" />
-                        <GradientStop Color="Gold" Offset="1.1" />
-                    </LinearGradientBrush>
-                </Ellipse.Fill>
-            </Ellipse>
-            <Image Name="ImageMusic" Source="Images/music.png" Width="200" Height="200"  RenderOptions.BitmapScalingMode="HighQuality"/>
+            <StackPanel>
+                <Grid>
+                    <Ellipse Stroke="Red" StrokeThickness="1" Margin="5" Width="300" Height="300">
+                        <Ellipse.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="Gold" Offset="0.0" />
+                                <GradientStop Color="#FEFFD2" Offset="0.5" />
+                                <GradientStop Color="Gold" Offset="1.1" />
+                            </LinearGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Image Name="ImageMusic" Source="Images/music.png" Width="200" Height="200"  RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Grid>
+                <TextBlock Name="NameOfSong" HorizontalAlignment="Center"></TextBlock>
+
+            </StackPanel>
+           
 
         </Grid>
 
@@ -45,9 +59,10 @@
                 <TextBlock Width="50" Name="durationTblock"/>
             </StackPanel>
             <StackPanel Name="Control" Orientation="Horizontal" HorizontalAlignment="Center">
-                <StackPanel Width="180" VerticalAlignment="Center" Orientation="Horizontal">
-
+                <StackPanel Width="150" VerticalAlignment="Center" Orientation="Horizontal">
+                    
                 </StackPanel>
+
                 <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Random" Click="Random_Click">
                     <Grid>
                         <Ellipse Name="RandomEllipse" Fill="Transparent" StrokeThickness="2" Stroke="Black" />
@@ -60,6 +75,12 @@
                         <Image  Source="Images/previous.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </Button>
+                <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Stop" Click="Stop_Click">
+                    <Grid>
+                        <Ellipse Name="StopEllipse" Fill="Transparent" StrokeThickness="2" Stroke="Black" />
+                        <Image  Source="Images/stop.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Button>
                 <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Playbtn" Click="Playbtn_Click">
                     <Grid>
                         <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
@@ -67,6 +88,7 @@
                     </Grid>
 
                 </Button>
+                
                 <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="NextButton" Click="NextButton_Click">
                     <Grid>
                         <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" Height="38" Margin="0,0,0.4,0" VerticalAlignment="Top" />

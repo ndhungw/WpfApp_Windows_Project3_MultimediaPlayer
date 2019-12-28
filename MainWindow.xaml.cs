@@ -50,8 +50,12 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             {
                 if (_player.Source != null && _player.NaturalDuration.HasTimeSpan)
                 {
+                    var filename = _fullPaths[_lastIndex].Name;
+                    var converter = new NameConverter();
+                    var shortname = converter.Convert(filename, null, null, null);
+                    NameOfSong.Text = shortname.ToString();
+
                     TimeSlider.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
-                    durationTblock.Text = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
                     TimeSlider.Value = _player.Position.TotalSeconds;
                     currentPostTblock.Text = _player.Position.ToString(@"mm\:ss");
                     durationTblock.Text = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
@@ -70,8 +74,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 {
                     if (repeat == 0)
                     {
-
-                        _lastIndex = -1;
+                        stopSong();
                         return;
 
                     }
@@ -90,7 +93,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                             }
                             else
                             {
-                                _lastIndex = -1;
+                                stopSong();
                                 return;
                             }
                         }
@@ -105,7 +108,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
                     if (repeat == 0)
                     {
-                        _lastIndex = -1;
+                        stopSong();
                         return;
                     }
                     else
@@ -127,7 +130,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                             }
                             else
                             {
-                                _lastIndex = -1;
+                                stopSong();
                                 return;
                             }
                         }
@@ -373,6 +376,37 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 repeat = 0;
                 return;
             }
+        }
+
+        private void stopSong()
+        {
+            durationTblock.Text = "00:00";
+            currentPostTblock.Text = "";
+            NameOfSong.Text = "";
+            _player.Stop();
+            TimeSlider.Value = 0;
+            _isPlaying = false;
+            _lastIndex = -1;
+        }
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+
+            stopSong();
+
+        }
+
+        private void Remove_item_file(object sender, RoutedEventArgs e)
+        {
+
+                if (playlistListBox.SelectedIndex == _lastIndex)
+                {
+                    _player.Stop();
+                    _isPlaying = false;
+                    _lastIndex = -1;
+                }
+
+                _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+
         }
     }
 }
