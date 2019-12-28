@@ -1,4 +1,5 @@
 ﻿using Gma.System.MouseKeyHook;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -156,11 +157,15 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             string filename = _fullPaths[i].FullName;
             _player.Open(new Uri(filename, UriKind.Absolute));
             _player.Play();
-            _isPlaying = true;
+            System.Threading.Thread.Sleep(1000);
+            _player.Pause();
+            Playimg.Source = new BitmapImage(new Uri("Images/continue.png", UriKind.Relative));
+            _isPlaying = false;
 
         }
 
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
+        List<String> SongDirectory = new List<string>();
         List<int> positionNotPlayedYet = new List<int>();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -169,16 +174,51 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             _player.Volume = 1;
             volumeSlider.Value = volumeSlider.Maximum;
             volumeOff = true;
+
+            loadCurrentPlaylist();
+            
         }
 
+        private void loadCurrentPlaylist()
+        {
+            string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}currentPlaylist.txt";
+            if (!File.Exists(Dir))
+                return;
+
+            var reader = new StreamReader(Dir);
+            var position = double.Parse(reader.ReadLine());
+            _lastIndex = int.Parse(reader.ReadLine());
+
+            while (true)
+            {
+                string result = reader.ReadLine();
+                if (result == null)
+                    break;
+
+                SongDirectory.Add(result);
+                var info = new FileInfo(result);
+                _fullPaths.Add(info);
+            }
+            _isPlaying = true;
+            PlaySelectedIndex(_lastIndex);
+            playlistListBox.SelectedIndex = _lastIndex;
+            _player.Position = TimeSpan.FromSeconds(position);
+            _player.Pause();
+        }
         private void Browserbtn_Click(object sender, RoutedEventArgs e)
         {
             var screen = new Microsoft.Win32.OpenFileDialog();
-
+            screen.Multiselect = true;
+            screen.Filter = "Music files (.mp3)|*.mp3; *.MP3";
             if (screen.ShowDialog() == true)
             {
-                var info = new FileInfo(screen.FileName);
-                _fullPaths.Add(info);
+                foreach(var item in screen.FileNames)
+                {
+                    SongDirectory.Add(item);
+                    var info = new FileInfo(item);
+                    _fullPaths.Add(info);
+                }
+
             }
         }
         private void playlistListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -301,6 +341,20 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
         {
             _hook.KeyUp -= keyUp_hook;
             _hook.Dispose();
+
+
+            if(_fullPaths.Count != 0)
+            {
+                string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}currentPlaylist.txt";
+                using (StreamWriter sw = File.CreateText(Dir))
+                {
+                    sw.WriteLine($"{_player.Position.TotalSeconds}");
+                    sw.WriteLine($"{_lastIndex.ToString()}");
+                    for (int i = 0; i < SongDirectory.Count(); i++)
+                        sw.WriteLine($"{SongDirectory[i]}");
+                }
+            }
+
         }
 
         private void playNextSong()
@@ -388,11 +442,23 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             _isPlaying = false;
             _lastIndex = -1;
         }
+
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
-
             stopSong();
+        }
 
+        private void resetPlaylist()
+        {
+            durationTblock.Text = "";
+            currentPostTblock.Text = "";
+            NameOfSong.Text = "";
+            _player.Stop();
+            TimeSlider.Value = 0;
+            _isPlaying = false;
+            _lastIndex = -1;
+            _fullPaths.Clear();
+            SongDirectory.Clear();
         }
 
         private void Remove_item_file(object sender, RoutedEventArgs e)
@@ -406,6 +472,83 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 }
 
                 _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+
+        }
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            resetPlaylist();
+        }
+
+        private void savePlaylist()
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            saveFileDialog1.CreatePrompt = true;
+            saveFileDialog1.OverwritePrompt = true;
+            saveFileDialog1.FilterIndex = 1;
+            saveFileDialog1.DefaultExt = "txt";
+            saveFileDialog1.AddExtension = true;
+            saveFileDialog1.RestoreDirectory = true;
+
+            if (saveFileDialog1.ShowDialog() == true)
+            {
+                List<string> stringFile = new List<string>();
+
+                stringFile.Add($"{_lastIndex.ToString()}");
+                for (int i = 0; i < SongDirectory.Count(); i++)
+                    stringFile.Add($"{SongDirectory[i]}");
+
+                File.WriteAllLines(saveFileDialog1.FileName, stringFile);
+                MessageBox.Show("Playlist saved");
+            }
+        }
+        private void SavePlayList_Click(object sender, RoutedEventArgs e)
+        {
+            //string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}{playlistName}.txt";
+            //using (StreamWriter sw = File.AppendText(Dir))
+            //{
+            //    sw.WriteLine($"{_lastIndex.ToString()}");
+            //    for(int i =0; i< SongDirectory.Count(); i++)
+            //        sw.WriteLine($"{SongDirectory[i]}");
+            //}
+
+
+            savePlaylist();
+        }
+
+
+        private void LoadPlayList_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "txt files (*.txt)|*.txt";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var converter = new NameConverter();
+                string Dir = openFileDialog.FileName;
+
+                if (!File.Exists(Dir))
+                    return;
+
+                var reader = new StreamReader(Dir);
+                _lastIndex = int.Parse(reader.ReadLine());
+                SongDirectory.Clear();
+                _fullPaths.Clear();
+
+                while (true)
+                {
+                    string result = reader.ReadLine();
+                    if (result == null)
+                        break;
+
+                    SongDirectory.Add(result);
+                    var info = new FileInfo(result);
+                    _fullPaths.Add(info);
+                }
+            }
 
         }
     }

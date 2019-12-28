@@ -5,11 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp_Windows_Project3_MultimediaPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="460" Width="1000" Loaded="Window_Loaded" Closed="Window_Closed">
+        Title="MainWindow" Height="490" Width="1000" Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <local:NameConverter x:Key="converter"/>
     </Window.Resources>
     <DockPanel>
+        <Menu DockPanel.Dock="Top" Name="Header" Height="20" Background="Black">
+            <MenuItem Header="Actions" Foreground="White" Focusable="False">
+                <MenuItem Header="NewPlayList" Click="MenuItem_Click" Foreground="Black" />
+                <MenuItem Header="SavePlayList" Click="SavePlayList_Click" Foreground="Black" />
+                <MenuItem Header="LoadPlayList" Click="LoadPlayList_Click" Foreground="Black" />
+            </MenuItem>
+        </Menu>
         <StackPanel DockPanel.Dock="Right" Width="300" Background="LightBlue">
             <ListBox Name="playlistListBox" Height="350" Canvas.Left="332" Canvas.Top="36" BorderThickness="2" BorderBrush="Black" Margin="1,0,0,0" MouseDoubleClick="playlistListBox_MouseDoubleClick">
                 <ListBox.ContextMenu>
