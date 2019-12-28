@@ -157,10 +157,6 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             string filename = _fullPaths[i].FullName;
             _player.Open(new Uri(filename, UriKind.Absolute));
             _player.Play();
-            System.Threading.Thread.Sleep(1000);
-            _player.Pause();
-            Playimg.Source = new BitmapImage(new Uri("Images/continue.png", UriKind.Relative));
-            _isPlaying = false;
 
         }
 
@@ -203,6 +199,8 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             PlaySelectedIndex(_lastIndex);
             playlistListBox.SelectedIndex = _lastIndex;
             _player.Position = TimeSpan.FromSeconds(position);
+            Playimg.Source = new BitmapImage(new Uri("Images/continue.png", UriKind.Relative));
+            _isPlaying = false;
             _player.Pause();
         }
         private void Browserbtn_Click(object sender, RoutedEventArgs e)
