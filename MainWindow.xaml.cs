@@ -48,8 +48,10 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
             Dispatcher.Invoke(() =>
             {
-                if (_player.Source != null)
-                {                  
+                if (_player.Source != null && _player.NaturalDuration.HasTimeSpan)
+                {
+                    TimeSlider.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
+                    durationTblock.Text = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
                     TimeSlider.Value = _player.Position.TotalSeconds;
                     currentPostTblock.Text = _player.Position.ToString(@"mm\:ss");
                     durationTblock.Text = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
@@ -62,7 +64,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
         private void _player_MediaEnded(object sender, EventArgs e)
         {
             if(random == false)
-            {
+            {   
                 _lastIndex++;
                 if (_lastIndex == _fullPaths.Count())
                 {
@@ -147,12 +149,11 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             if (_isPlaying == false)
                 return; 
 
+            
             string filename = _fullPaths[i].FullName;
             _player.Open(new Uri(filename, UriKind.Absolute));
             _player.Play();
-            System.Threading.Thread.Sleep(800);
             _isPlaying = true;
-            TimeSlider.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
 
         }
 
@@ -210,7 +211,6 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 return;
 
             currentPostTblock.Text = _player.Position.ToString(@"mm\:ss");
-            durationTblock.Text = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
             _isPlaying = true;
         }
         private void TimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
