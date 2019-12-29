@@ -394,7 +394,11 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                         if (_lastIndex == _fullPaths.Count())
                         {
                             if (type == false)
+                            {
+                                _lastIndex -= 1;
                                 stopSong();
+                                return;
+                            }
                             else
                                 _lastIndex = 0;
                         }
@@ -423,7 +427,11 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                     if (index == randomList.Count())
                     {
                         if (type == false)
+                        {
+                            _lastIndex -= 1;
                             stopSong();
+                            return;
+                        }
                         else
                             _lastIndex = randomList[0];
                     }
@@ -440,7 +448,11 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                         if (index == randomList.Count)
                         {
                             if (type == false)
+                            {
+                                _lastIndex -= 1;
                                 stopSong();
+                                return;
+                            }
                             else
                                 _lastIndex = randomList[0];
                         }
@@ -624,9 +636,8 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             if (_fullPaths.Count == 0) return;
             currentPostTblock.Text = "00:00";
             TimeSlider.Value = 0;
-            _player.Position = TimeSpan.FromSeconds(TimeSlider.Value);
-            _player.Stop();
-            _isPlaying = false;
+            _player.Position = TimeSpan.FromSeconds(0);
+            playOrPauseSong();
             SetUpPlayer(_lastIndex);
         }
 
