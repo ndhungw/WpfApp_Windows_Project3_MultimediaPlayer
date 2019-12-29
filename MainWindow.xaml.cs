@@ -68,91 +68,94 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
         private void _player_MediaEnded(object sender, EventArgs e)
         {
-            if(random == false)
-            {   
-                _lastIndex++;
-                if (_lastIndex == _fullPaths.Count())
-                {
-                    if (repeat == 0)
-                    {
-                        stopSong();
-                        return;
+            //if(random == false)
+            //{   
+            //    _lastIndex++;
+            //    if (_lastIndex == _fullPaths.Count())
+            //    {
+            //        if (repeat == 0)
+            //        {
+            //            stopSong();
+            //            return;
 
-                    }
-                    else
-                    {
-                        if (repeat == 1)
-                        {
-                            _lastIndex = 0;
-                        }
-                        else
-                        {
-                            if (repeated == false)
-                            {
-                                repeated = true;
-                                _lastIndex = 0;
-                            }
-                            else
-                            {
-                                stopSong();
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (positionNotPlayedYet.Count() == 0)
-                {
-                    _lastIndex = -1;
+            //        }
+            //        else
+            //        {
+            //            if (repeat == 1)
+            //            {
+            //                _lastIndex = 0;
+            //            }
+            //            else
+            //            {
+            //                if (repeated == false)
+            //                {
+            //                    repeated = true;
+            //                    _lastIndex = 0;
+            //                }
+            //                else
+            //                {
+            //                    stopSong();
+            //                    return;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    if (positionNotPlayedYet.Count() == 0)
+            //    {
+            //        _lastIndex = -1;
 
-                    if (repeat == 0)
-                    {
-                        stopSong();
-                        return;
-                    }
-                    else
-                    {
-                        if (repeat == 1)
-                        {
-                            positionNotPlayedYet.Clear();
-                            for (int i = 0; i < _fullPaths.Count(); i++)
-                                positionNotPlayedYet.Add(i);
-                        }
-                        else
-                        {
-                            if (repeated == false)
-                            {
-                                repeated = true;
-                                positionNotPlayedYet.Clear();
-                                for (int i = 0; i < _fullPaths.Count(); i++)
-                                    positionNotPlayedYet.Add(i);
-                            }
-                            else
-                            {
-                                stopSong();
-                                return;
-                            }
-                        }
-                    }
-                }
+            //        if (repeat == 0)
+            //        {
+            //            stopSong();
+            //            return;
+            //        }
+            //        else
+            //        {
+            //            if (repeat == 1)
+            //            {
+            //                positionNotPlayedYet.Clear();
+            //                for (int i = 0; i < _fullPaths.Count(); i++)
+            //                    positionNotPlayedYet.Add(i);
+            //            }
+            //            else
+            //            {
+            //                if (repeated == false)
+            //                {
+            //                    repeated = true;
+            //                    positionNotPlayedYet.Clear();
+            //                    for (int i = 0; i < _fullPaths.Count(); i++)
+            //                        positionNotPlayedYet.Add(i);
+            //                }
+            //                else
+            //                {
+            //                    stopSong();
+            //                    return;
+            //                }
+            //            }
+            //        }
+            //    }
 
-                Random rnd = new Random();
-                int position = rnd.Next(0, positionNotPlayedYet.Count() - 1);
-                _lastIndex = positionNotPlayedYet[position];
-                positionNotPlayedYet.RemoveAt(position);
+            //    Random rnd = new Random();
+            //    int position = rnd.Next(0, positionNotPlayedYet.Count() - 1);
+            //    _lastIndex = positionNotPlayedYet[position];
+            //    positionNotPlayedYet.RemoveAt(position);
 
-            }
+            //}
 
-            PlaySelectedIndex(_lastIndex);
+            //PlaySelectedIndex(_lastIndex);
+
+            playNextSong(false);
         }
 
         private void PlaySelectedIndex(int i)
         {
             if (_isPlaying == false)
-                return; 
-
+                return;
+            if (_lastIndex < 0)
+                return;
             
             string filename = _fullPaths[i].FullName;
             _player.Open(new Uri(filename, UriKind.Absolute));
@@ -217,10 +220,16 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                     _fullPaths.Add(info);
                 }
 
+                if(random == true)
+                    randomList = createRandomList();
+
             }
         }
         private void playlistListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (_isPlaying == false)
+                Playimg.Source = new BitmapImage(new Uri("Images/pause.png", UriKind.Relative));
+
             _isPlaying = true;
 
             if (playlistListBox.SelectedIndex >= 0)
@@ -332,7 +341,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 playPreviousSong();
 
             if (e.Control && e.Shift && (e.KeyCode == System.Windows.Forms.Keys.D))
-                playNextSong();
+                playNextSong(true);
 
         }
         private void Window_Closed(object sender, EventArgs e)
@@ -355,47 +364,221 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
         }
 
-        private void playNextSong()
+        private void playNextSong(bool type)
         {
-            _lastIndex++;
-            if (_lastIndex >= _fullPaths.Count())
-                _lastIndex = 0;
+
+            if(random == false)
+            {
+                _lastIndex++;
+
+                if (repeat == 1)
+                {
+                    if (_lastIndex == _fullPaths.Count())
+                        _lastIndex = 0;
+                }
+                else
+                {
+                    if (repeat == 0)
+                    {
+                        if (_lastIndex == _fullPaths.Count())
+                        {
+                            if (type == false)
+                                stopSong();
+                            else
+                                _lastIndex = 0;
+                        }
+                    }
+                    else
+                        _lastIndex--;
+                }
+            }
+            else
+            {
+                int index=-1;
+
+                for(int i = 0; i < randomList.Count(); i++)
+                {
+                    if(_lastIndex == randomList[i])
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                index = index + 1; 
+
+                if (repeat == 1)
+                {
+                    if (index == randomList.Count())
+                    {
+                        if (type == false)
+                            stopSong();
+                        else
+                            _lastIndex = randomList[0];
+                    }
+                    else
+                    {
+                        _lastIndex = randomList[index];
+                    }
+
+                }
+                else
+                {
+                    if (repeat == 0)
+                    {
+                        if (index == randomList.Count)
+                        {
+                            if (type == false)
+                                stopSong();
+                            else
+                                _lastIndex = randomList[0];
+                        }
+                        else
+                        {
+                            _lastIndex = randomList[index];
+                        }
+                    }
+                }
+
+              
+            }
+
             PlaySelectedIndex(_lastIndex);
             showUI();
         }
+
         private void playPreviousSong()
         {
-            _lastIndex--;
+            if (random == false)
+            {
+                _lastIndex--;
 
-            if (_lastIndex < 0)
-                _lastIndex = _fullPaths.Count() - 1;
+                if (repeat == 1)
+                {
+                    if (_lastIndex == -1)
+                        _lastIndex = _fullPaths.Count() -1;
+                }
+                else
+                {
+                    if (repeat == 0)
+                    {
+                        if (_lastIndex == -1)
+                        {
+                            _lastIndex = _fullPaths.Count() -1;
+                        }
+                    }
+                    else
+                        _lastIndex++;
+                }
+            }
+            else
+            {
+                int index = -1;
 
+                for (int i = 0; i < randomList.Count(); i++)
+                {
+                    if (_lastIndex == randomList[i])
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                index = index - 1;
+
+                if (repeat == 1)
+                {
+                    if (index == -1)
+                    {
+
+                            _lastIndex = randomList[randomList.Count()-1];
+                    }
+                    else
+                    {
+                        _lastIndex = randomList[index];
+                    }
+
+                }
+                else
+                {
+                    if (repeat == 0)
+                    {
+                        if (index == -1)
+                        {
+                                _lastIndex = randomList[randomList.Count()-1];
+                        }
+                        else
+                        {
+                            _lastIndex = randomList[index];
+                        }
+                    }
+                }
+
+
+            }
             PlaySelectedIndex(_lastIndex);
             showUI();
         }
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            playNextSong();
+            playNextSong(true);
         }
 
         private void Previousbtn_Click(object sender, RoutedEventArgs e)
         {
             playPreviousSong();
         }
+        List<int> randomList;
+        private List<int> createRandomList()
+        {
+            List<int> randomList1 = new List<int>();
+            bool ok = false;
 
+            if(_lastIndex != -1)
+            {
+                randomList1.Add(_lastIndex);
+                ok = true;
+            }
+
+            for (int i = 0; i < _fullPaths.Count(); i++)
+            { 
+                if(_lastIndex!= i)
+                    randomList1.Add(i);
+            }
+
+
+            for (int i = 1; i < _fullPaths.Count(); i++)
+            {
+                Random rnd = new Random();
+                int position1;
+                if (ok == true)
+                    position1 = rnd.Next(1, _fullPaths.Count() - 1);
+                else
+                    position1 = rnd.Next(0, _fullPaths.Count() - 1);
+
+                if (position1 != i)
+                {
+                    int temp = randomList1[position1];
+                    randomList1[position1] = randomList1[i];
+                    randomList1[i] = temp;
+                }
+            }
+
+            String result = "";
+            for (int i = 0; i < randomList1.Count(); i++)
+                result = result + randomList1[i].ToString();
+
+            MessageBox.Show(result);
+            return randomList1;
+        }
         private void Random_Click(object sender, RoutedEventArgs e)
         {
             if (random == false)
             {
                 RandomEllipse.Fill = new SolidColorBrush(Colors.Red);
                 random = true;
-                positionNotPlayedYet.Clear();
 
-                for (int i = 0; i < _fullPaths.Count(); i++)
-                    positionNotPlayedYet.Add(i);
-
-                if (_lastIndex >= 0)
-                    positionNotPlayedYet.Remove(_lastIndex);
+                 randomList = createRandomList();
             }
             else
             {
@@ -468,8 +651,13 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                     _isPlaying = false;
                     _lastIndex = -1;
                 }
+            SongDirectory.RemoveAt(playlistListBox.SelectedIndex);
 
-                _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+            _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+
+            if(random == true)
+                randomList = createRandomList();
+
 
         }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -503,14 +691,6 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
         }
         private void SavePlayList_Click(object sender, RoutedEventArgs e)
         {
-            //string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}{playlistName}.txt";
-            //using (StreamWriter sw = File.AppendText(Dir))
-            //{
-            //    sw.WriteLine($"{_lastIndex.ToString()}");
-            //    for(int i =0; i< SongDirectory.Count(); i++)
-            //        sw.WriteLine($"{SongDirectory[i]}");
-            //}
-
 
             savePlaylist();
         }
