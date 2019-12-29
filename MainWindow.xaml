@@ -18,7 +18,8 @@
             </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Right" Width="300" Background="LightBlue">
-            <ListBox Name="playlistListBox" Height="350" Canvas.Left="332" Canvas.Top="36" BorderThickness="2" BorderBrush="Black" Margin="1,0,0,0" MouseDoubleClick="playlistListBox_MouseDoubleClick">
+            <ListBox Name="playlistListBox" Height="350" Canvas.Left="332" Canvas.Top="36" BorderThickness="2" BorderBrush="Black" Margin="1,0,0,0" MouseDoubleClick="playlistListBox_MouseDoubleClick"
+                     SelectionChanged="playlistListBox_SelectionChanged">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Remove" Click="Remove_item_file">
@@ -91,7 +92,7 @@
                 <Button  Width="40" Height="40"  Background="Transparent" BorderThickness="0" Margin="10 0" Name="Playbtn" Click="Playbtn_Click">
                     <Grid>
                         <Ellipse Fill="Transparent" StrokeThickness="2" Stroke="Black" />
-                        <Image Source="Images/pause.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality" Name="Playimg"/>
+                        <Image Source="Images/continue.png" Margin="10" RenderOptions.BitmapScalingMode="HighQuality" Name="Playimg"/>
                     </Grid>
 
                 </Button>

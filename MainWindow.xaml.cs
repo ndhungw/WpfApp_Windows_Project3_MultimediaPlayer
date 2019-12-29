@@ -152,14 +152,13 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
         private void PlaySelectedIndex(int i)
         {
-            if (_isPlaying == false)
-                return;
-            if (_lastIndex < 0)
-                return;
-            
+            _isPlaying = true;
+            if (i < 0 || i >= _fullPaths.Count) return;
             string filename = _fullPaths[i].FullName;
             _player.Open(new Uri(filename, UriKind.Absolute));
             _player.Play();
+
+            playlistListBox.SelectedIndex = i;
 
         }
 
@@ -227,7 +226,13 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
         }
         private void playlistListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (_isPlaying == false)
+            if (_lastIndex == playlistListBox.SelectedIndex)
+            {
+                playOrPauseSong();
+                return;
+            }
+
+            /*if (_isPlaying == false)
                 Playimg.Source = new BitmapImage(new Uri("Images/pause.png", UriKind.Relative));
 
             _isPlaying = true;
@@ -253,7 +258,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             else
             {
                MessageBox.Show("No file selected!");
-            }
+            }*/
         }
         private void showUI()
         {
@@ -355,11 +360,17 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}currentPlaylist.txt";
                 using (StreamWriter sw = File.CreateText(Dir))
                 {
+                    if (_lastIndex == -1) _lastIndex = 0;
                     sw.WriteLine($"{_player.Position.TotalSeconds}");
                     sw.WriteLine($"{_lastIndex.ToString()}");
                     for (int i = 0; i < SongDirectory.Count(); i++)
                         sw.WriteLine($"{SongDirectory[i]}");
                 }
+            }
+            else
+            {
+                string Dir = $"{AppDomain.CurrentDomain.BaseDirectory}currentPlaylist.txt";
+                File.Delete(Dir);
             }
 
         }
@@ -610,13 +621,13 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
         private void stopSong()
         {
-            durationTblock.Text = "00:00";
-            currentPostTblock.Text = "";
-            NameOfSong.Text = "";
-            _player.Stop();
+            if (_fullPaths.Count == 0) return;
+            currentPostTblock.Text = "00:00";
             TimeSlider.Value = 0;
+            _player.Position = TimeSpan.FromSeconds(TimeSlider.Value);
+            _player.Stop();
             _isPlaying = false;
-            _lastIndex = -1;
+            SetUpPlayer(_lastIndex);
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
@@ -633,6 +644,8 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
             TimeSlider.Value = 0;
             _isPlaying = false;
             _lastIndex = -1;
+            playlistListBox.SelectedIndex = -1;
+            SetUpPlayer(_lastIndex);
             _fullPaths.Clear();
             SongDirectory.Clear();
         }
@@ -692,37 +705,81 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
         private void LoadPlayList_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "txt files (*.txt)|*.txt";
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                stopSong();
-                var converter = new NameConverter();
-                string Dir = openFileDialog.FileName;
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "txt files (*.txt)|*.txt";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
 
-                if (!File.Exists(Dir))
-                    return;
-
-                var reader = new StreamReader(Dir);
-                _lastIndex = int.Parse(reader.ReadLine());
-                SongDirectory.Clear();
-                _fullPaths.Clear();
-
-                while (true)
+                if (openFileDialog.ShowDialog() == true)
                 {
-                    string result = reader.ReadLine();
-                    if (result == null)
-                        break;
+                    stopSong();
+                    resetPlaylist();
+                    var converter = new NameConverter();
+                    string Dir = openFileDialog.FileName;
 
-                    SongDirectory.Add(result);
-                    var info = new FileInfo(result);
-                    _fullPaths.Add(info);
+                    if (!File.Exists(Dir))
+                        return;
+
+                    var reader = new StreamReader(Dir);
+                    _lastIndex = int.Parse(reader.ReadLine());
+                    playlistListBox.SelectedIndex = _lastIndex;
+                    SongDirectory.Clear();
+                    _fullPaths.Clear();
+
+                    while (true)
+                    {
+                        string result = reader.ReadLine();
+                        if (result == null)
+                            break;
+
+                        SongDirectory.Add(result);
+                        var info = new FileInfo(result);
+                        _fullPaths.Add(info);
+                    }
                 }
             }
+            catch(Exception error)
+            {
+                MessageBox.Show("Failed to load playlist!");
+                resetPlaylist();
+            }
 
+        }
+
+        private void SetUpPlayer(int i)
+        {
+            if (i < 0 || i >= _fullPaths.Count)
+            {
+                Playimg.Source = new BitmapImage(new Uri("Images/continue.png", UriKind.Relative));
+                return;
+            }
+
+            string filename = _fullPaths[_lastIndex].FullName;
+            _player.Open(new Uri(filename, UriKind.Absolute));
+            Playimg.Source = new BitmapImage(new Uri("Images/continue.png", UriKind.Relative));
+
+        }
+
+        private void playlistListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (playlistListBox.SelectedIndex == -1) return;
+            _lastIndex = playlistListBox.SelectedIndex;
+            SetUpPlayer(playlistListBox.SelectedIndex);
+            _isPlaying = false;
+            if (random == true)
+            {
+                positionNotPlayedYet.Clear();
+                for (int i = 0; i < _fullPaths.Count(); i++)
+                    positionNotPlayedYet.Add(i);
+
+                positionNotPlayedYet.Remove(playlistListBox.SelectedIndex);
+            }
+
+            if (repeat == 2)
+                repeated = false;
+            playOrPauseSong();
         }
     }
 }
