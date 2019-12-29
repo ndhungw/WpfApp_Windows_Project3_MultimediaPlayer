@@ -564,11 +564,6 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
                 }
             }
 
-            String result = "";
-            for (int i = 0; i < randomList1.Count(); i++)
-                result = result + randomList1[i].ToString();
-
-            MessageBox.Show(result);
             return randomList1;
         }
         private void Random_Click(object sender, RoutedEventArgs e)
