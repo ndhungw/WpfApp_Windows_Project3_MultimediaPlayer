@@ -647,16 +647,15 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
                 if (playlistListBox.SelectedIndex == _lastIndex)
                 {
-                    _player.Stop();
-                    _isPlaying = false;
-                    _lastIndex = -1;
+                     stopSong();
                 }
-            SongDirectory.RemoveAt(playlistListBox.SelectedIndex);
 
-            _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+                SongDirectory.RemoveAt(playlistListBox.SelectedIndex);
 
-            if(random == true)
-                randomList = createRandomList();
+                _fullPaths.RemoveAt(playlistListBox.SelectedIndex);
+
+                if(random == true)
+                    randomList = createRandomList();
 
 
         }
@@ -705,6 +704,7 @@ namespace WpfApp_Windows_Project3_MultimediaPlayer
 
             if (openFileDialog.ShowDialog() == true)
             {
+                stopSong();
                 var converter = new NameConverter();
                 string Dir = openFileDialog.FileName;
 
